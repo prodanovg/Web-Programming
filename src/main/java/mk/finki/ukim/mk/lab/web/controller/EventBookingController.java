@@ -1,6 +1,7 @@
 package mk.finki.ukim.mk.lab.web.controller;
 
 import mk.finki.ukim.mk.lab.model.Event;
+import mk.finki.ukim.mk.lab.service.EventBookingService;
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpServletRequest;
 import mk.finki.ukim.mk.lab.model.SavedBooking;
@@ -21,15 +22,17 @@ import java.util.Optional;
 public class EventBookingController {
 
     private final EventService eventService;
+    private final EventBookingService eventBookingService;
 
-    public EventBookingController(EventService eventService) {
+    public EventBookingController(EventService eventService, EventBookingService eventBookingService) {
         this.eventService = eventService;
+        this.eventBookingService = eventBookingService;
     }
 
     @GetMapping
     public String eventBooking(HttpServletRequest req, Model model) {
         String queryString = req.getParameter("bookingSearch");
-        List<SavedBooking> bookingsToSend = eventService.searchSavedBookings(queryString);
+        List<SavedBooking> bookingsToSend = eventBookingService.searchSavedBookings(queryString);
 
 
         model.addAttribute("savedBookingList", bookingsToSend);
@@ -37,7 +40,7 @@ public class EventBookingController {
     }
     @PostMapping("/add")
     public String eventBookingConfirmation(HttpServletRequest req, Model model) {
-        List<SavedBooking> savedBookingList = eventService.getSavedBookings();
+//        List<SavedBooking> savedBookingList = eventBookingService.getSavedBookings();
 
         Long eventId = Long.valueOf(req.getParameter("rad"));
         int numOfTickets = Integer.parseInt(req.getParameter("numTickets"));
@@ -50,7 +53,7 @@ public class EventBookingController {
             model.addAttribute("hostAddress", req.getRemoteAddr());
             model.addAttribute("eventName", eventName);
             model.addAttribute("numOfTickets", numOfTickets);
-            model.addAttribute("savedBookingList", savedBookingList);
+//            model.addAttribute("savedBookingList", savedBookingList);
             return "bookingConfirmation";
         }
         else {

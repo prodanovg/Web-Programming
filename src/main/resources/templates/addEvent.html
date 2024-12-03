@@ -43,6 +43,15 @@
                            placeholder="Enter event popularity score">
                 </div>
                 <div class="form-group">
+                    <label for="availableCards">Event Tickets</label>
+                    <input type="text"
+                           class="form-control"
+                           id="availableCards"
+                           name="availableCards"
+                           th:value="(${event} != null ? ${event.getAvailableCards()} : '')"
+                           placeholder="Enter event available cards">
+                </div>
+                <div class="form-group">
                     <label>Location</label>
                     <select name="location" class="form-control">
                         <option th:if="${event} != null"

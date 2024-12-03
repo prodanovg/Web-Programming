@@ -1,6 +1,7 @@
 package mk.finki.ukim.mk.lab.web.controller;
 
 import mk.finki.ukim.mk.lab.model.Location;
+import mk.finki.ukim.mk.lab.model.exceptions.LocationNotFoundException;
 import mk.finki.ukim.mk.lab.service.LocationService;
 import org.springframework.ui.Model;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.sun.beans.introspect.PropertyInfo.Name.description;
 
@@ -27,7 +29,27 @@ public class EventController {
     }
 
     @GetMapping
-    public String getEventsPage(@RequestParam(required = false) String error, Model model) {
+    public String getEventsPage(Model model) {
+        List<Event> listEvents = eventService.listAll();
+        model.addAttribute("events", listEvents);
+        return "listEvents";
+    }
+
+    @PostMapping("/searchLocations")
+    public String searchLocations(@RequestParam(required = false) Long locationSearch, Model model) {
+        try {
+            List<Event> events = eventService.findAllByLocation_ID(locationSearch);
+            model.addAttribute("events", events);
+            return "listEvents";
+        } catch (LocationNotFoundException ex) {
+            model.addAttribute("events", ex.getMessage());
+            return "redirect:/events?error=LocationNotFound";
+        }
+
+    }
+
+    @GetMapping("/resetSearch")
+    public String resetSearch(Model model) {
         List<Event> listEvents = eventService.listAll();
         model.addAttribute("events", listEvents);
         return "listEvents";
@@ -35,13 +57,29 @@ public class EventController {
 
     @PostMapping("/add")
     public String saveEvent(
+            @RequestParam(required = false) Long id,
             @RequestParam String name,
             @RequestParam String description,
             @RequestParam double popularityScore,
             @RequestParam Long location,
-            @RequestParam int availbleCards
+            @RequestParam int availableCards
     ) {
-        this.eventService.save(name, description, popularityScore, location,availbleCards);
+        if (id != null) {
+            Optional<Event> ExistingEvent = eventService.findById(id);
+            if (ExistingEvent.isPresent()) {
+                Event event = ExistingEvent.get();
+                event.setName(name);
+                event.setDescription(description);
+                event.setPopularityScore(popularityScore);
+                event.setLocation(locationService.findById(location).orElseThrow(() -> new LocationNotFoundException(location)));
+                event.setAvailableCards(availableCards);
+                eventService.saveEvent(event);
+            } else {
+                return "redirect:/events?error=EventNotFound";
+            }
+        } else {
+            this.eventService.saveWithParams(name, description, popularityScore, location, availableCards);
+        }
         return "redirect:/events";
     }
 
@@ -66,7 +104,7 @@ public class EventController {
             List<Location> locationList = locationService.findAll();
             model.addAttribute("locations", locationList);
             model.addAttribute("event", event);
-            return "addEvent";
+            return "forward:/events/add-form?id=" + id;
         }
         return "redirect:/events?error=EventNotFound";
     }

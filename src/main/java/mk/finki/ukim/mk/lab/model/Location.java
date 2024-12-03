@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -22,11 +24,15 @@ public class Location {
     @Column(length = 4000)
     private String description;
 
-    public Location(String name, String address, String capacity, String description) {
-        this.id = (long) (Math.random()*1000);
+    @OneToMany(mappedBy = "location")
+    private List<Event> events;
+
+
+    public Location(String name, String address, String capacity, String description,List<Event> events) {
         this.name = name;
         this.address = address;
         this.capacity = capacity;
         this.description = description;
+        this.events = events;
     }
 }

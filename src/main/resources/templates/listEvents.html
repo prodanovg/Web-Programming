@@ -17,40 +17,59 @@
     <h1>Welcome to our Event Booking App</h1>
 </header>
 <main>
-<!--    <h2>Search an event:</h2>-->
-<!--    <form th:method="GET" th:action="@{/events}">-->
-<!--        <label for="search">By Event Name:</label>-->
-<!--        <input type="text" name="searchName" id="search" placeholder="Search an event">-->
-<!--        <br/>-->
-<!--        <label for="minRating">By Minimum Event Rating (0.00 - 5.00): </label>-->
-<!--        <input type="number" name="minRating" id="minRating" min="0" max="10" placeholder="Min Rating">-->
-<!--        <br/>-->
-<!--        <input type="submit" value="Submit">-->
-<!--    </form>-->
+    <div>
+        <form th:method="POST" th:action="@{/events/searchLocations}">
+            <label for="locationSearch">Search Location By Location ID</label>
+            <input type="number" id="locationSearch" name="locationSearch" />
+            <br>
+            <input type="submit" value="Submit" />
+        </form>
+        <form th:method="GET" th:action="@{/events/resetSearch}">
+            <input type="submit" value="Reset"/>
+        </form>
+    </div>
+    <!--    <h2>Search an event:</h2>-->
+    <!--    <form th:method="GET" th:action="@{/events}">-->
+    <!--        <label for="search">By Event Name:</label>-->
+    <!--        <input type="text" name="searchName" id="search" placeholder="Search an event">-->
+    <!--        <br/>-->
+    <!--        <label for="minRating">By Minimum Event Rating (0.00 - 5.00): </label>-->
+    <!--        <input type="number" name="minRating" id="minRating" min="0" max="10" placeholder="Min Rating">-->
+    <!--        <br/>-->
+    <!--        <input type="submit" value="Submit">-->
+    <!--    </form>-->
 
     <form id="mainForm" th:method="POST" th:action="@{events/eventBooking/add}">
         <h2>Choose an event:</h2>
         <div th:each="event : ${events}">
             <input type="radio" th:id="${event.getId()}" name="rad" th:value="${event.getId()}" required/>
             <label th:for="${event.getId()}">
-                Name: <th:block th:text="${event.getName()}"></th:block>,
-                Description: <th:block th:text="${event.getDescription()}"></th:block>,
-                Rating: <th:block th:text="${event.getPopularityScore()}"></th:block>
-                Location: <th:block th:text="${event.getLocation().getName()}"></th:block>
-                Remaining cards:<th:block th:text="${event.getAvailableCards()}"></th:block>
+                Name:
+                <th:block th:text="${event.getName()}"></th:block>
+                ,
+                Description:
+                <th:block th:text="${event.getDescription()}"></th:block>
+                ,
+                Rating:
+                <th:block th:text="${event.getPopularityScore()}"></th:block>
+                Location:
+                <th:block th:text="${event.getLocation().getName()}"></th:block>
+                Remaining cards:
+                <th:block th:text="${event.getAvailableCards()}"></th:block>
             </label>
             <br>
-<!--                  <form th:action="@{'/events/delete/{id}' (id=${event.getId()})}"-->
-<!--                        th:method="DELETE">-->
-<!--                    <button type="submit"-->
-<!--                            class="btn btn-sm btn-danger delete-event">-->
-<!--                      <i class="fa fa-trash">Delete</i>-->
-<!--                    </button>-->
-<!--                  </form>-->
+            <!--                  <form th:action="@{'/events/delete/{id}' (id=${event.getId()})}"-->
+            <!--                        th:method="DELETE">-->
+            <!--                    <button type="submit"-->
+            <!--                            class="btn btn-sm btn-danger delete-event">-->
+            <!--                      <i class="fa fa-trash">Delete</i>-->
+            <!--                    </button>-->
+            <!--                  </form>-->
             <a th:href="@{'/events/edit-form/{id}' (id=${event.getId()})}" class="btn btn-sm btn-info edit-event ml-2">
                 <i class="fa fa-edit">Edit</i>
             </a>
-            <a th:href="@{'/events/delete/{id}' (id=${event.getId()})}"   class="btn btn-sm btn-info edit-event ml-2" style="display:inline">
+            <a th:href="@{'/events/delete/{id}' (id=${event.getId()})}" class="btn btn-sm btn-info edit-event ml-2"
+               style="display:inline">
                 <i class="fa fa-trash"></i> Delete
             </a>
             <br/>
@@ -64,16 +83,16 @@
         <br>
         <h2>Choose number of tickets:</h2>
 
-        <input type="number" name="numTickets" min="1"  required/><br/>
+        <input type="number" name="numTickets" min="1" required/><br/>
         <br/>
 
         <input type="submit" value="Submit Booking">
 
     </form>
-<!--    <form th:method="POST" ">-->
-<!--        -->
-<!--        -->
-<!--    </form>-->
+    <!--    <form th:method="POST" ">-->
+    <!--        -->
+    <!--        -->
+    <!--    </form>-->
 </main>
 </body>
 </html>

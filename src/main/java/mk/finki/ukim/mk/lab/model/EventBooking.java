@@ -1,40 +1,32 @@
 package mk.finki.ukim.mk.lab.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
+
 @NoArgsConstructor
 public class EventBooking {
-    @Id
-    private String eventName;
+
+    private String eventNameBooked;
 
     private String attendeeName;
 
     private String attendeeAddress;
 
-    private Long numberOfTickets;
+    private Long numberOfTicketsBooked;
 
-    public EventBooking(String eventName, String attendeeName, String attendeeAddress, long numberOfTickets) {
-        this.eventName = eventName;
+
+    private SavedBooking savedBooking;
+
+    public EventBooking(String eventNameBooked, String attendeeName, String attendeeAddress, long numberOfTicketsBooked) {
+        this.eventNameBooked = eventNameBooked;
         this.attendeeName = attendeeName;
         this.attendeeAddress = attendeeAddress;
-        this.numberOfTickets = numberOfTickets;
+        this.numberOfTicketsBooked = numberOfTicketsBooked;
     }
 
-//    //constructors
-//    public EventBooking() {}
-//
-//    public EventBooking(String eventName, String attendeeName, String attendeeAddress, Long numberOfTickets) {
-//        this.eventName = eventName;
-//        this.attendeeName = attendeeName;
-//        this.attendeeAddress = attendeeAddress;
-//        this.numberOfTickets = numberOfTickets;
-//    }
-//
-//
+
 }
