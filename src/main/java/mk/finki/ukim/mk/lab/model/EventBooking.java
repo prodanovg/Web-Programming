@@ -5,12 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.util.List;
 
+@Data
+@Entity
 @NoArgsConstructor
 public class EventBooking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String eventNameBooked;
+    private String eventBookedName;
 
     private String attendeeName;
 
@@ -18,11 +23,12 @@ public class EventBooking {
 
     private Long numberOfTicketsBooked;
 
+    @OneToMany(mappedBy = "eventBooking")
+    private List<Event> events;
 
-    private SavedBooking savedBooking;
 
-    public EventBooking(String eventNameBooked, String attendeeName, String attendeeAddress, long numberOfTicketsBooked) {
-        this.eventNameBooked = eventNameBooked;
+    public EventBooking(String eventBookedName, String attendeeName, String attendeeAddress, long numberOfTicketsBooked) {
+        this.eventBookedName = eventBookedName;
         this.attendeeName = attendeeName;
         this.attendeeAddress = attendeeAddress;
         this.numberOfTicketsBooked = numberOfTicketsBooked;

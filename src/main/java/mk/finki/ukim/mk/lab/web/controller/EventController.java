@@ -71,7 +71,8 @@ public class EventController {
                 event.setName(name);
                 event.setDescription(description);
                 event.setPopularityScore(popularityScore);
-                event.setLocation(locationService.findById(location).orElseThrow(() -> new LocationNotFoundException(location)));
+                event.setLocation(locationService.findById(location).
+                        orElseThrow(() -> new LocationNotFoundException(location)));
                 event.setAvailableCards(availableCards);
                 eventService.saveEvent(event);
             } else {

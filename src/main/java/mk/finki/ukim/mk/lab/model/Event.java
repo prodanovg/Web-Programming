@@ -28,6 +28,9 @@ public class Event {
 
     private int availableCards;
 
+    @ManyToOne
+    private EventBooking eventBooking;
+
     public Event(String name, String description, double popularityScore,Location location,int availableCards) {
         this.name = name;
         this.description = description;

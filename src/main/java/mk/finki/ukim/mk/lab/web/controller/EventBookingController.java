@@ -1,18 +1,14 @@
 package mk.finki.ukim.mk.lab.web.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import mk.finki.ukim.mk.lab.model.Event;
+import mk.finki.ukim.mk.lab.model.EventBooking;
+import mk.finki.ukim.mk.lab.model.exceptions.EventNotFoundException;
 import mk.finki.ukim.mk.lab.service.EventBookingService;
 import org.springframework.ui.Model;
-import jakarta.servlet.http.HttpServletRequest;
-import mk.finki.ukim.mk.lab.model.SavedBooking;
 import mk.finki.ukim.mk.lab.service.EventService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.web.IWebExchange;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,37 +26,53 @@ public class EventBookingController {
     }
 
     @GetMapping
-    public String eventBooking(HttpServletRequest req, Model model) {
-        String queryString = req.getParameter("bookingSearch");
-        List<SavedBooking> bookingsToSend = eventBookingService.searchSavedBookings(queryString);
+    public String eventBooking(@RequestParam(required = false) String bookingSearch, Model model) {
+        List<EventBooking> bookingList = eventBookingService.getAllBookings();
 
+        if (bookingSearch != null && !bookingSearch.isEmpty()) {
+            bookingList = eventBookingService.searchSavedBookings(bookingSearch);
+        }
 
-        model.addAttribute("savedBookingList", bookingsToSend);
+        model.addAttribute("savedBookingList", bookingList);
         return "bookingConfirmation";
     }
+
     @PostMapping("/add")
-    public String eventBookingConfirmation(HttpServletRequest req, Model model) {
-//        List<SavedBooking> savedBookingList = eventBookingService.getSavedBookings();
+    public String addBooking(@RequestParam int numTickets,
+                             @RequestParam Long eventId, Model model) {
+        try {
+            Optional<Event> Optional_event = eventService.findById(eventId);
 
-        Long eventId = Long.valueOf(req.getParameter("rad"));
-        int numOfTickets = Integer.parseInt(req.getParameter("numTickets"));
-        String eventName = eventService.findById(eventId).get().getName();
+            if(Optional_event.isEmpty()) {
+                throw new EventNotFoundException(eventId);
+            }
+            Event event = Optional_event.get();
 
-        if(numOfTickets <= eventService.findById(eventId).get().getAvailableCards()){
-            eventService.addBooking(eventName, numOfTickets);
-            eventService.remainingCards(eventId, numOfTickets);
-            model.addAttribute("hostName", req.getRemoteHost());
-            model.addAttribute("hostAddress", req.getRemoteAddr());
-            model.addAttribute("eventName", eventName);
-            model.addAttribute("numOfTickets", numOfTickets);
-//            model.addAttribute("savedBookingList", savedBookingList);
+            eventBookingService.addBooking(event.getName(), numTickets);
+
+            model.addAttribute("eventName", event.getName());
+            model.addAttribute("numOfTickets", numTickets);
+
+            model.addAttribute("savedBookingList", eventBookingService.getAllBookings());
+
             return "bookingConfirmation";
+        } catch (Exception e) {
+            return "redirect:/events?error=BookingFailed";
         }
-        else {
-            return "redirect:/events?error=EventNotFound";
-        }
+    }
 
+    @GetMapping("/removeAllBookedEvents")
+    public String removeAllBookedEvents(Model model) {
+        eventBookingService.removeAllAndUpdateBookings();
 
+        return "redirect:/events/eventBooking";
+
+    }
+    @GetMapping("/goBackToEvents")
+    public String goBackToEvents(Model model) {
+        List<Event> listEvents = eventService.listAll();
+        model.addAttribute("events", listEvents);
+        return "redirect:/events";
 
     }
 }

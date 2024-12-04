@@ -25,7 +25,7 @@
             <input type="submit" value="Submit" />
         </form>
         <form th:method="GET" th:action="@{/events/resetSearch}">
-            <input type="submit" value="Reset"/>
+            <input type="submit" value="Reset" />
         </form>
     </div>
     <!--    <h2>Search an event:</h2>-->
@@ -42,7 +42,7 @@
     <form id="mainForm" th:method="POST" th:action="@{events/eventBooking/add}">
         <h2>Choose an event:</h2>
         <div th:each="event : ${events}">
-            <input type="radio" th:id="${event.getId()}" name="rad" th:value="${event.getId()}" required/>
+            <input type="radio" th:id="${event.getId()}" name="eventId" th:value="${event.getId()}" required/>
             <label th:for="${event.getId()}">
                 Name:
                 <th:block th:text="${event.getName()}"></th:block>
@@ -58,13 +58,7 @@
                 <th:block th:text="${event.getAvailableCards()}"></th:block>
             </label>
             <br>
-            <!--                  <form th:action="@{'/events/delete/{id}' (id=${event.getId()})}"-->
-            <!--                        th:method="DELETE">-->
-            <!--                    <button type="submit"-->
-            <!--                            class="btn btn-sm btn-danger delete-event">-->
-            <!--                      <i class="fa fa-trash">Delete</i>-->
-            <!--                    </button>-->
-            <!--                  </form>-->
+
             <a th:href="@{'/events/edit-form/{id}' (id=${event.getId()})}" class="btn btn-sm btn-info edit-event ml-2">
                 <i class="fa fa-edit">Edit</i>
             </a>
@@ -84,15 +78,14 @@
         <h2>Choose number of tickets:</h2>
 
         <input type="number" name="numTickets" min="1" required/><br/>
+        <small class="form-text text-danger" id="numTicketsError"></small>
+
         <br/>
 
         <input type="submit" value="Submit Booking">
 
     </form>
-    <!--    <form th:method="POST" ">-->
-    <!--        -->
-    <!--        -->
-    <!--    </form>-->
+
 </main>
 </body>
 </html>
