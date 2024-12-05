@@ -1,6 +1,7 @@
 package mk.finki.ukim.mk.lab.web.controller;
 
 import mk.finki.ukim.mk.lab.model.Location;
+import mk.finki.ukim.mk.lab.model.exceptions.EventHasSameLocationIdAndEventNumber;
 import mk.finki.ukim.mk.lab.model.exceptions.LocationNotFoundException;
 import mk.finki.ukim.mk.lab.service.LocationService;
 import org.springframework.ui.Model;
@@ -74,12 +75,21 @@ public class EventController {
                 event.setLocation(locationService.findById(location).
                         orElseThrow(() -> new LocationNotFoundException(location)));
                 event.setAvailableCards(availableCards);
-                eventService.saveEvent(event);
+                try {
+                    eventService.saveEvent(event);
+                } catch (EventHasSameLocationIdAndEventNumber ex) {
+                    return "redirect:/events?error=EventHasSameLocationIdAndEventNumber";
+                }
+
             } else {
                 return "redirect:/events?error=EventNotFound";
             }
         } else {
-            this.eventService.saveWithParams(name, description, popularityScore, location, availableCards);
+            try {
+                this.eventService.saveWithParams(name, description, popularityScore, location, availableCards);
+            } catch (EventHasSameLocationIdAndEventNumber ex) {
+                return "redirect:/events?error=EventHasSameLocationIdAndEventNumber";
+            }
         }
         return "redirect:/events";
     }

@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByLocation_Id(Long locationId);
-
+    boolean existsByNameAndLocation_Id(String name, Long locationId);
     Optional<Event> findByName(String eventName);
 
 

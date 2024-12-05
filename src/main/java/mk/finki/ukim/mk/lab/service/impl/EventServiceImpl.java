@@ -40,6 +40,9 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public Event saveEvent(Event event) {
+        if(eventRepository.existsByNameAndLocation_Id(event.getName(),event.getLocation().getId())){
+            throw new EventHasSameLocationIdAndEventNumber(event.getLocation().getId(), event.getName());
+        }
         return eventRepository.save(event);
     }
 
@@ -49,6 +52,9 @@ public class EventServiceImpl implements EventService {
                 orElseThrow(() -> new InvalidLocationId(locationId));
 
         Event event = new Event(name, description, popularityScore, location, availableCards);
+        if(eventRepository.existsByNameAndLocation_Id(event.getName(),locationId)){
+            throw new EventHasSameLocationIdAndEventNumber(locationId, event.getName());
+        }
         return Optional.of(eventRepository.save(event));
     }
 
