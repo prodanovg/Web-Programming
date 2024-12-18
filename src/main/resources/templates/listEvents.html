@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.springframework.org/security/tags">
 <head>
     <meta charset="utf-8">
     <title>Event Booking page - Welcome and choose an Event</title>
@@ -10,22 +10,44 @@
             width: 800px;
             margin: auto;
         }
+        .logout{
+            display: inline;
+            margin-left: 700px;
+            margin-top: 20px;
+        }
+        .searchLocation{
+            display: inline;
+            margin-top: -150px;
+]        }
+        .resetSwitch1{
+            margin-left: 100px;
+            margin-top: -38px;
+        }
+        .resetSwitch2{
+            margin-left: 150px;
+            margin-top: -38px;
+        }
     </style>
 </head>
 <body>
 <header>
     <h1>Welcome to our Event Booking App</h1>
+    <div class="logout">
+        <a th:href="@{'logout'}">
+            <input type="submit" value="LOGOUT" class="btn btn-primary"/>
+        </a>
+    </div>
 </header>
 <main>
-    <div>
+    <div class="searchLocation">
         <form th:method="POST" th:action="@{/events/searchLocations}">
             <label for="locationSearch">Search Location By Location ID</label>
-            <input type="number" id="locationSearch" name="locationSearch" />
+            <input type="number" id="locationSearch" name="locationSearch"/>
             <br>
-            <input type="submit" value="Submit" />
+            <input type="submit" value="Submit" class="btn btn-primary"/>
         </form>
-        <form th:method="GET" th:action="@{/events/resetSearch}">
-            <input type="submit" value="Reset" />
+        <form class="resetSwitch1" th:method="GET" th:action="@{/events/resetSearch}">
+            <input type="submit" value="Reset" class="btn btn-secondary"/>
         </form>
     </div>
     <!--    <h2>Search an event:</h2>-->
@@ -40,6 +62,7 @@
     <!--    </form>-->
 
     <form id="mainForm" th:method="POST" th:action="@{events/eventBooking/add}">
+        <br>
         <h2>Choose an event:</h2>
         <div th:each="event : ${events}">
             <input type="radio" th:id="${event.getId()}" name="eventId" th:value="${event.getId()}" required/>
@@ -58,21 +81,26 @@
                 <th:block th:text="${event.getAvailableCards()}"></th:block>
             </label>
             <br>
-
-            <a th:href="@{'/events/edit-form/{id}' (id=${event.getId()})}" class="btn btn-sm btn-info edit-event ml-2">
-                <i class="fa fa-edit">Edit</i>
-            </a>
-            <a th:href="@{'/events/delete/{id}' (id=${event.getId()})}" class="btn btn-sm btn-info edit-event ml-2"
-               style="display:inline">
-                <i class="fa fa-trash"></i> Delete
-            </a>
+            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{'/events/edit-form/{id}' (id=${event.getId()})}"
+                   class="btn btn-sm btn-info edit-event ml-2">
+                    <i class="fa fa-edit">Edit</i>
+                </a>
+            </th:block>
+            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{'/events/delete/{id}' (id=${event.getId()})}" class="btn btn-sm btn-info edit-event ml-2"
+                   style="display:inline">
+                    <i class="fa fa-trash"></i> Delete
+                </a>
+            </th:block>
             <br/>
             <br/>
         </div>
-
-        <a href="/events/add-form" class="btn btn-block btn-dark add-product-btn">
-            Add new event
-        </a>
+        <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+            <a href="/events/add-form" class="btn btn-block btn-dark add-product-btn">
+                Add new event
+            </a>
+        </th:block>
         <br>
         <br>
         <h2>Choose number of tickets:</h2>
@@ -82,9 +110,15 @@
 
         <br/>
 
-        <input type="submit" value="Submit Booking">
+        <input type="submit" value="Submit Booking" class="btn btn-primary">
 
     </form>
+    <div class="resetSwitch2">
+        <!--        <a  th:method="GET" th:action="@{/events/eventBooking/GoToEventBookings}">-->
+        <a th:href="@{'events/eventBooking/GoToEventBookings'}">
+            <input type="submit" value="Go to EventBooking" class="btn btn-secondary"/>
+        </a>
+    </div>
 
 </main>
 </body>

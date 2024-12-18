@@ -1,9 +1,12 @@
 package mk.finki.ukim.mk.lab.web.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import mk.finki.ukim.mk.lab.model.Location;
 import mk.finki.ukim.mk.lab.model.exceptions.EventHasSameLocationIdAndEventNumber;
 import mk.finki.ukim.mk.lab.model.exceptions.LocationNotFoundException;
 import mk.finki.ukim.mk.lab.service.LocationService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 
 import mk.finki.ukim.mk.lab.model.Event;
@@ -15,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sun.beans.introspect.PropertyInfo.Name.description;
+//import static com.sun.beans.introspect.PropertyInfo.Name.description;
 
 @Controller
 @RequestMapping("/events")
@@ -51,12 +54,11 @@ public class EventController {
 
     @GetMapping("/resetSearch")
     public String resetSearch(Model model) {
-        List<Event> listEvents = eventService.listAll();
-        model.addAttribute("events", listEvents);
-        return "listEvents";
+        return "redirect:/events";
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('ADMIN')")
     public String saveEvent(
             @RequestParam(required = false) Long id,
             @RequestParam String name,
@@ -95,6 +97,7 @@ public class EventController {
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteEvent(@PathVariable Long id) {
         this.eventService.deleteById(id);
         return "redirect:/events";
@@ -109,6 +112,7 @@ public class EventController {
     }
 
     @GetMapping("/edit-form/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String editEventPage(Model model, @PathVariable Long id) {
         if (this.eventService.findById(id).isPresent()) {
             Event event = this.eventService.findById(id).get();
@@ -119,4 +123,11 @@ public class EventController {
         }
         return "redirect:/events?error=EventNotFound";
     }
+    @GetMapping("/access_denied")
+    public String getAccessDeniedPage(Model model) {
+        model.addAttribute("events", "access-denied");
+        return "listEvents";
+    }
+
+
 }

@@ -75,4 +75,8 @@ public class EventBookingController {
         return "redirect:/events";
 
     }
+    @GetMapping("/GoToEventBookings")
+    public String goToEventBookings() {
+        return "redirect:/events/eventBooking";
+    }
 }

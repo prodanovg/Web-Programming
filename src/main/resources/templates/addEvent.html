@@ -10,30 +10,28 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <!-- Error Handling -->
+
             <div th:if="${errorMessage != null}" class="alert alert-danger">
                 <p th:text="${errorMessage}"></p>
             </div>
 
             <form action="/events/add" method="POST">
-                <!-- Hidden Field for Event ID -->
+
                 <input id="id" type="hidden" name="id" th:value="${event != null ? event.getId() : ''}">
 
-                <!-- Event Name -->
+
                 <div class="form-group">
                     <label for="name">Event Name</label>
                     <input type="text" class="form-control" id="name" name="name"
                            th:value="${event != null ? event.getName() : ''}" required placeholder="Event Name">
                 </div>
 
-                <!-- Event Description -->
                 <div class="form-group">
                     <label for="description">Event Description</label>
                     <textarea class="form-control" id="description" name="description" rows="3"
                               placeholder="Description" th:text="${event != null ? event.getDescription() : ''}"></textarea>
                 </div>
 
-                <!-- Event Popularity Score -->
                 <div class="form-group">
                     <label for="popularityScore">Popularity Score</label>
                     <input type="number" class="form-control" id="popularityScore" name="popularityScore"
@@ -41,7 +39,6 @@
                            placeholder="Popularity Score (0-5)">
                 </div>
 
-                <!-- Event Tickets -->
                 <div class="form-group">
                     <label for="availableCards">Available Tickets</label>
                     <input type="number" class="form-control" id="availableCards" name="availableCards"
@@ -49,7 +46,6 @@
                            placeholder="Tickets Available">
                 </div>
 
-                <!-- Location Dropdown -->
                 <div class="form-group">
                     <label for="location">Location</label>
                     <select id="location" name="location" class="form-control" required>
@@ -61,7 +57,6 @@
                     </select>
                 </div>
 
-                <!-- Buttons -->
                 <div class="form-group d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <a class="btn btn-secondary" href="/events">Back</a>

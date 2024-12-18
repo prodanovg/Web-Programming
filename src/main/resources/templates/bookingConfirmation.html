@@ -1,82 +1,90 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Booking - Confirmation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style type="text/css">
+        .resetSwitch2{
+            margin-left: 100px;
+            margin-top: -45px;
+        }
         body {
             width: 800px;
             margin: auto;
+            padding: 20px;
         }
         table {
-            width:100%;
+            width: 100%;
         }
         table, td, th {
             border: 1px solid black;
-            padding: 3px 2px;
+            padding: 8px;
+            text-align: left;
         }
     </style>
 </head>
 <body>
 <section>
-    <header>
-        <h1>Event Booking page - Booking confirmation </h1>
+    <header class="mb-4">
+        <h1 class="text-center">Event Booking Page - Booking Confirmation</h1>
     </header>
-    <table>
+    <table class="table table-bordered">
+        <thead class="thead-dark">
         <tr>
-            <th colspan="2">
-                Your Booking Status
-            </th>
+            <th colspan="2" class="text-center">Your Booking Status</th>
         </tr>
+        </thead>
+        <tbody>
         <tr>
-            <td><b>Attendee Name </b></td>
+            <td><b>Attendee Name</b></td>
             <td th:text="${hostName} ?: 'Petko Petkov'"></td>
         </tr>
         <tr>
-            <td><b>Client IPF Address</b></td>
-            <td th:text="${hostAddress} ?:'127.0.0.1'"></td>
+            <td><b>Client IP Address</b></td>
+            <td th:text="${hostAddress} ?: '127.0.0.1'"></td>
         </tr>
         <tr>
             <td><b>Booking for Event</b></td>
             <td th:text="${eventName} ?: 'Oppenheimer'"></td>
         </tr>
         <tr>
-            <td><b>Number of tickets</b></td>
-            <td th:text="${numOfTickets} ?: '2'">2</td>
+            <td><b>Number of Tickets</b></td>
+            <td th:text="${numOfTickets} ?: '2'"></td>
         </tr>
+        </tbody>
     </table>
     <br>
-    <!--Searching form GET to search the bookings -->
-    <section>
-        <form th:method="GET" th:action="@{/events/eventBooking}">
+    <section class="mb-4">
+        <form th:method="GET" th:action="@{/events/eventBooking}" class="form-inline">
             <div class="form-group">
-                <label for="bookingSearch">Search Booking by Name</label>
-                <input type="text" id="bookingSearch" name="bookingSearch" class="form-control" />
+                <label for="bookingSearch" class="mr-2">Search Booking by Name</label>
+                <input type="text" id="bookingSearch" name="bookingSearch" class="form-control mr-2" />
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </section>
-    <br/>
-    <div th:each="savedBooking : ${savedBookingList}">
-        <table>
+    <div th:each="savedBooking : ${savedBookingList}" class="mb-4">
+        <table class="table table-bordered">
             <tr>
-                <td>Event name: <th:block th:text="${savedBooking.getEventBookedName()}"></th:block></td>
+                <td>Event Name: <th:block th:text="${savedBooking.getEventBookedName()}"></th:block></td>
             </tr>
             <tr>
-                <td>Number of tickets: <th:block th:text="${savedBooking.getNumberOfTicketsBooked()}"></th:block></td>
+                <td>Number of Tickets: <th:block th:text="${savedBooking.getNumberOfTicketsBooked()}"></th:block></td>
             </tr>
         </table>
-        <br>
     </div>
-    <section>
+    <div class="mb-2">
         <form th:method="GET" th:action="@{/events/eventBooking/goBackToEvents}">
-            <input type="submit" value="Go Back"/>
+            <button type="submit" class="btn btn-secondary">Go Back</button>
         </form>
-    </section>
-    <section>
+    </div>
+    <div class="resetSwitch2">
         <form th:method="GET" th:action="@{/events/eventBooking/removeAllBookedEvents}">
-            <input type="submit" value="Remove All Booked Events"/>
+            <button type="submit" class="btn btn-danger">Remove All Booked Events</button>
         </form>
-    </section>
+    </div>
 </section>
 </body>
 </html>
