@@ -81,21 +81,22 @@
                 <th:block th:text="${event.getAvailableCards()}"></th:block>
             </label>
             <br>
+
             <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                 <a th:href="@{'/events/edit-form/{id}' (id=${event.getId()})}"
                    class="btn btn-sm btn-info edit-event ml-2">
                     <i class="fa fa-edit">Edit</i>
                 </a>
-            </th:block>
-            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                 <a th:href="@{'/events/delete/{id}' (id=${event.getId()})}" class="btn btn-sm btn-info edit-event ml-2"
                    style="display:inline">
                     <i class="fa fa-trash"></i> Delete
                 </a>
             </th:block>
+
             <br/>
             <br/>
         </div>
+
         <th:block sec:authorize="hasRole('ROLE_ADMIN')">
             <a href="/events/add-form" class="btn btn-block btn-dark add-product-btn">
                 Add new event

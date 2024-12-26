@@ -3,11 +3,14 @@ package mk.finki.ukim.mk.lab.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,9 +25,12 @@ public class WebSecurityConfig {
 
 
     private final PasswordEncoder passwordEncoder;
+    private final CustomUsernameAndPasswordAuthentication authProvider;
 
-    public WebSecurityConfig(PasswordEncoder passwordEncoder) {
+
+    public WebSecurityConfig(PasswordEncoder passwordEncoder, CustomUsernameAndPasswordAuthentication authProvider) {
         this.passwordEncoder = passwordEncoder;
+        this.authProvider = authProvider;
     }
 
     @Bean
@@ -32,6 +38,9 @@ public class WebSecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers((headers) -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                )
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/home", "/assets/**", "/register")
                         .permitAll()
@@ -39,7 +48,6 @@ public class WebSecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .permitAll()
@@ -60,26 +68,36 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user1 = User.builder()
-                .username("gp")
-                .password(passwordEncoder.encode("gp"))
-                .roles("USER")
-                .build();
-        UserDetails user2 = User.builder()
-                .username("test")
-                .password(passwordEncoder.encode("test"))
-                .roles("USER")
-                .build();
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin"))
-                .roles("ADMIN")
-                .build();
 
-        return new InMemoryUserDetailsManager(user1, user2, admin);
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(authProvider);
+        return authenticationManagerBuilder.build();
     }
+
+    //inMemoryAuth
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails user1 = User.builder()
+//                .username("gp")
+//                .password(passwordEncoder.encode("gp"))
+//                .roles("USER")
+//                .build();
+//        UserDetails user2 = User.builder()
+//                .username("test")
+//                .password(passwordEncoder.encode("test"))
+//                .roles("USER")
+//                .build();
+//        UserDetails admin = User.builder()
+//                .username("admin")
+//                .password(passwordEncoder.encode("admin"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user1, user2, admin);
+//    }
 
 
 }
